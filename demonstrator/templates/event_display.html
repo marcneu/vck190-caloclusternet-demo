@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Event Display</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+body { margin: 0; overflow: hidden; }
+canvas { display: block; }
+.controls {
+  position: fixed;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+.legend {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 12px;
+  z-index: 10;
+  font-family: sans-serif;
+  font-size: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.legend-item {
+  margin-bottom: 12px;
+}
+.legend-item:last-child {
+  margin-bottom: 0;
+}
+.legend-title {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+.colorbar-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: stretch;
+}
+#colorbar {
+  width: 140px;
+  height: 16px;
+  border: 1px solid #999;
+}
+.colorbar-labels {
+  position: relative;
+  width: 140px;
+  height: 14px;
+  font-size: 10px;
+  color: #666;
+}
+.colorbar-label {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.cluster-indicator {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+#cluster-sphere {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #ff6600;
+}
+#offline-cluster-sphere {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #1f77b4;
+}
+</style>
+</head>
+<body>
+
+<div class="controls d-flex gap-2 justify-content-center">
+  <button id="prev-event" class="btn btn-primary btn-sm" type="button">&larr; Previous</button>
+  <button id="next-event" class="btn btn-primary btn-sm" type="button">Next &rarr;</button>
+</div>
+
+<div class="legend">
+  <div class="legend-item">
+    <div class="legend-title">Crystal Energy</div>
+    <div class="colorbar-container">
+      <canvas id="colorbar"></canvas>
+      <div id="colorbar-labels" class="colorbar-labels"></div>
+    </div>
+  </div>
+  <div class="legend-item">
+    <div class="legend-title">Run Info</div>
+    <div>Event ID: <span id="current-event-id">N/A</span></div>
+    <div>Process: <span id="current-process">N/A</span></div>
+    <div>Background: <span id="current-background">N/A</span></div>
+  </div>
+  <div class="legend-item">
+    <div class="legend-title">Clusters</div>
+    <div class="cluster-indicator">
+      <div id="cluster-sphere"></div>
+      <span>Predictions</span>
+    </div>
+    <div class="cluster-indicator">
+      <div id="offline-cluster-sphere"></div>
+      <span>Targets</span>
+    </div>
+  </div>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+// Crystal energy scale for color mapping (GeV).
+// Change these two values to adjust lower/upper colorbar limits globally.
+const CRYSTAL_ENERGY_MIN_GEV = 0.0;
+const CRYSTAL_ENERGY_MAX_GEV = 1.0;
+const USE_LOG_COLOR_SCALE = true;
+const LOG_COLOR_FLOOR_GEV = 1e-3;
+const COLORBAR_LABEL_COUNT = 4;
+
+function energyToColorT(energyGeV) {
+  const minE = CRYSTAL_ENERGY_MIN_GEV;
+  const maxE = Math.max(CRYSTAL_ENERGY_MAX_GEV, minE + 1e-9);
+
+  if (!USE_LOG_COLOR_SCALE) {
+    const denom = Math.max(maxE - minE, 1e-9);
+    return Math.min(Math.max((energyGeV - minE) / denom, 0), 1);
+  }
+
+  const minPositive = Math.max(minE, LOG_COLOR_FLOOR_GEV);
+  const clamped = Math.min(Math.max(energyGeV, minPositive), maxE);
+  const logMin = Math.log10(minPositive);
+  const logMax = Math.log10(maxE);
+  const logVal = Math.log10(clamped);
+  const denom = Math.max(logMax - logMin, 1e-9);
+  return Math.min(Math.max((logVal - logMin) / denom, 0), 1);
+}
+
+// Plasma colormap function
+function plasmaColormap(t) {
+  // t should be between 0 and 1
+  // Inverted plasma: low values are bright yellow, high values are dark purple
+  t = 1 - Math.min(Math.max(t, 0), 1);
+  const colorStops = [
+    {t: 0.0, r: 0.050, g: 0.030, b: 0.529},
+    {t: 0.25, r: 0.282, g: 0.140, b: 0.898},
+    {t: 0.5, r: 0.765, g: 0.173, b: 0.901},
+    {t: 0.75, r: 0.991, g: 0.662, b: 0.178},
+    {t: 1.0, r: 0.940, g: 0.975, b: 0.131}
+  ];
+  
+  let lower = colorStops[0];
+  let upper = colorStops[colorStops.length - 1];
+  for (let i = 0; i < colorStops.length - 1; i++) {
+    if (t >= colorStops[i].t && t <= colorStops[i + 1].t) {
+      lower = colorStops[i];
+      upper = colorStops[i + 1];
+      break;
+    }
+  }
+  
+  const range = upper.t - lower.t;
+  const localT = range > 0 ? (t - lower.t) / range : 0;
+  const r = lower.r + (upper.r - lower.r) * localT;
+  const g = lower.g + (upper.g - lower.g) * localT;
+  const b = lower.b + (upper.b - lower.b) * localT;
+  
+  return new THREE.Color(r, g, b);
+}
+
+// Draw the colorbar
+const colorbarCanvas = document.getElementById("colorbar");
+const ctx = colorbarCanvas.getContext("2d");
+const width = colorbarCanvas.width;
+for (let i = 0; i < width; i++) {
+  const fraction = i / width;
+  const color = plasmaColormap(fraction);
+  ctx.fillStyle = `rgb(${(color.r * 255) | 0}, ${(color.g * 255) | 0}, ${(color.b * 255) | 0})`;
+  ctx.fillRect(i, 0, 1, colorbarCanvas.height);
+}
+
+// Keep colorbar labels in sync with global energy limits.
+const legendMinPositiveGeV = Math.max(CRYSTAL_ENERGY_MIN_GEV, LOG_COLOR_FLOOR_GEV);
+const legendMaxGeV = Math.max(CRYSTAL_ENERGY_MAX_GEV, legendMinPositiveGeV + 1e-9);
+const legendLogMin = Math.log10(legendMinPositiveGeV);
+const legendLogMax = Math.log10(legendMaxGeV);
+
+function buildLegendExponents(logMin, logMax, labelCount) {
+  const count = Math.max(2, Math.floor(labelCount));
+  const expMin = Math.floor(logMin);
+  const expMax = Math.ceil(logMax);
+  const span = expMax - expMin;
+
+  if (span === 0) {
+    return [expMin, expMax];
+  }
+
+  const exponents = [];
+  for (let index = 0; index < count; index++) {
+    const fraction = index / (count - 1);
+    const exponent = Math.round(expMin + fraction * span);
+    if (exponents.length === 0 || exponents[exponents.length - 1] !== exponent) {
+      exponents.push(exponent);
+    }
+  }
+
+  if (exponents[0] !== expMin) {
+    exponents[0] = expMin;
+  }
+  if (exponents[exponents.length - 1] !== expMax) {
+    exponents[exponents.length - 1] = expMax;
+  }
+
+  return exponents;
+}
+
+function formatTenPowerLabel(exponent) {
+  return `10<sup>${exponent}</sup>`;
+}
+
+const legendExponents = buildLegendExponents(legendLogMin, legendLogMax, COLORBAR_LABEL_COUNT);
+const labelsContainer = document.getElementById("colorbar-labels");
+labelsContainer.innerHTML = "";
+
+legendExponents.forEach((exponent, index) => {
+  const label = document.createElement("div");
+  label.className = "colorbar-label";
+  label.innerHTML = formatTenPowerLabel(exponent);
+
+  const t = (exponent - legendLogMin) / Math.max(legendLogMax - legendLogMin, 1e-9);
+  const clampedT = Math.min(Math.max(t, 0), 1);
+  label.style.left = `${clampedT * 100}%`;
+
+  if (index === 0) {
+    label.style.transform = "translateX(0)";
+  } else if (index === legendExponents.length - 1) {
+    label.style.transform = "translateX(-100%)";
+  }
+
+  labelsContainer.appendChild(label);
+});
+
+// Scene, camera, renderer
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xffffff);
+
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// Controls
+const controls = new OrbitControls(camera, renderer.domElement);
+
+// Lights
+const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
+scene.add(ambientLight);
+
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+directionalLight.position.set(1, 1, 1);
+scene.add(directionalLight);
+
+// Load GLB
+
+// Firstly load the full detector geometry as a single mesh for performance.
+const loaderFull = new GLTFLoader();
+loaderFull.load(
+  "crystals.glb",
+  (gltf) => {
+    const root = gltf.scene || gltf.scenes?.[0];
+    if (!root) {
+      console.error("No root scene found in GLB!");
+      return;
+    }
+
+    // Make the full geometry semi-transparent and gray for context
+    root.traverse((child) => {
+      if (child.isMesh) {
+        child.material = new THREE.MeshStandardMaterial({ color: 0x999999, transparent: true, opacity: 0.02 });
+        // child.material.side = THREE.DoubleSide; // Show both sides of the crystals (removes flickering)
+      }
+    });
+
+    scene.add(root);
+
+    // Calculate detector center of mass and position camera
+    const bbox = new THREE.Box3().setFromObject(root);
+    const center = bbox.getCenter(new THREE.Vector3());
+    const size = bbox.getSize(new THREE.Vector3());
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const fov = camera.fov * (Math.PI / 180);
+    const cameraDistance = Math.abs(maxDim / 2 / Math.tan(fov / 2)) * 1.5;
+
+    camera.position.set(center.x, center.y, center.z + cameraDistance);
+    controls.target.copy(center);
+    controls.update();
+  },
+  undefined,
+  (error) => {
+    console.error("Failed to load crystals.glb:", error);
+  }
+);
+
+// Secondly load individual active crystals and color them based on energy. 
+const loader = new GLTFLoader();
+loader.load(
+  "crystals.glb",
+  (gltf) => {
+    const root = gltf.scene || gltf.scenes?.[0];
+    if (!root) {
+      console.error("No root scene found in GLB!");
+      return;
+    }
+
+    // Important: add the whole root once; do NOT re-parent children during traverse.
+    scene.add(root);
+
+    const crystals = [];
+    root.traverse((child) => {
+      if (child.isMesh) {
+        // Ensure MeshStandardMaterial so we can change color
+        child.material = new THREE.MeshStandardMaterial({ color: 0x8888ff });
+        child.material.side = THREE.DoubleSide; // Show both sides of the crystals (removes flickering)
+        child.visible = false;
+        crystals.push(child);
+      }
+    });
+
+    if (crystals.length === 0) {
+      console.warn("GLB loaded, but no mesh crystals were found.");
+      return;
+    }
+
+    let energies = [];
+    const threshold = 0.001; // Minimum energy to show a crystal
+    const predictedClusterColor = new THREE.Color(0xff6600); // Orange color for predicted clusters
+    const offlineClusterColor = new THREE.Color(0x1f77b4); // Blue color for offline clusters
+    let predictedClusterSpheres = []; // Keep track of predicted cluster spheres
+    let offlineClusterSpheres = []; // Keep track of offline cluster spheres
+
+    function updateColors() {
+      crystals.forEach((mesh, i) => {
+        if (energies[i] < threshold) {
+          mesh.visible = false;
+        } else {
+          mesh.visible = true;
+          const t = energyToColorT(energies[i]);
+          mesh.material.color = plasmaColormap(t);
+        }
+      });
+    }
+
+    function updatePredictedClusterSpheres(clusters) {
+      // Remove old predicted cluster spheres from scene
+      predictedClusterSpheres.forEach((sphere) => {
+        scene.remove(sphere);
+      });
+      predictedClusterSpheres = [];
+
+      // Create new predicted cluster spheres
+      clusters.forEach((cluster, idx) => {
+        // Create sphere geometry: base radius of 5, scaled by energy
+        const baseRadius = 5;
+        const energyScale = Math.log(Math.max(1, cluster.p_energy)) / 3; // Log scale for energy
+        const radius = baseRadius * (1 + energyScale * 0.5);
+        const positionScale = 100; // Convert cluster position from meters to centimeters
+
+        const geometry = new THREE.SphereGeometry(radius, 16, 16);
+        
+        const material = new THREE.MeshStandardMaterial({
+          color: predictedClusterColor,
+          metalness: 0.3,
+          roughness: 0.4,
+        });
+
+        const sphere = new THREE.Mesh(geometry, material);
+        sphere.position.set(
+          cluster.p_x * positionScale,
+          cluster.p_y * positionScale,
+          cluster.p_z * positionScale
+        );
+        scene.add(sphere);
+        predictedClusterSpheres.push(sphere);
+      });
+    }
+
+    function updateOfflineClusterSpheres(clusters) {
+      // Remove old offline cluster spheres from scene
+      offlineClusterSpheres.forEach((sphere) => {
+        scene.remove(sphere);
+      });
+      offlineClusterSpheres = [];
+
+      // Create new offline cluster spheres
+      clusters.forEach((cluster) => {
+        const baseRadius = 4;
+        const energyScale = Math.log(Math.max(1, cluster.train_E || 0)) / 3;
+        const radius = baseRadius * (1 + energyScale * 0.5);
+        const positionScale = 1; // Offline cluster positions are already in centimeters
+
+        const geometry = new THREE.SphereGeometry(radius, 16, 16);
+        const material = new THREE.MeshStandardMaterial({
+          color: offlineClusterColor,
+          metalness: 0.1,
+          roughness: 0.6,
+          transparent: true,
+          opacity: 0.9,
+        });
+
+        const sphere = new THREE.Mesh(geometry, material);
+        sphere.position.set(
+          (cluster.train_x || 0) * positionScale,
+          (cluster.train_y || 0) * positionScale,
+          (cluster.train_z || 0) * positionScale
+        );
+        scene.add(sphere);
+        offlineClusterSpheres.push(sphere);
+      });
+    }
+
+    async function fetchEventData() {
+      try {
+        const response = await fetch("/threejs_event_data");
+        const data = await response.json();
+        energies = data.energies;
+        document.getElementById("current-event-id").textContent = data.uni_event_id || "N/A";
+        document.getElementById("current-process").textContent = data.physics_process_label || data.physics_process || "N/A";
+        document.getElementById("current-background").textContent = data.beam_background_label || data.beam_background_level || "N/A";
+        console.log("Loaded event:", data.uni_event_id, "with", energies.filter(e => e > 0).length, "active crystals");
+        updateColors();
+        updatePredictedClusterSpheres(data.predicted_clusters || []);
+        updateOfflineClusterSpheres(data.offline_targets || []);
+      } catch (error) {
+        console.error("Failed to fetch event data:", error);
+      }
+    }
+
+    async function changeEvent(direction) {
+      try {
+        const response = await fetch(`/threejs_event_data/${direction}`);
+        if (!response.ok) {
+          throw new Error(`Navigation request failed with status ${response.status}`);
+        }
+        await fetchEventData();
+      } catch (error) {
+        console.error(`Failed to change event (${direction}):`, error);
+      }
+    }
+
+    document.getElementById("prev-event").addEventListener("click", () => changeEvent("prev"));
+    document.getElementById("next-event").addEventListener("click", () => changeEvent("next"));
+
+    // Load the current event once on startup; subsequent updates happen only on button clicks.
+    fetchEventData();
+  },
+  undefined,
+  (error) => {
+    console.error("Failed to load crystals.glb:", error);
+  }
+);
+
+// Resize handling
+window.addEventListener("resize", () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// Animate
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+</script>
+</body>
+</html>

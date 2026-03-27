@@ -1,0 +1,26 @@
+[project]
+name = "DeePloy"
+version = "0.0.1"
+authors = [
+  { name="Marc Neu", email="marc.neu@kit.edu" },
+  { name="Thomas Lobmaier"},
+  { name="Frank Baptist"},
+  { name="Fabio Papagno"},
+]
+description = "DeePloy: First prototype of a deployment methodology"
+readme = "README.md"
+requires-python = ">=3.12"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+
+[tool.setuptools]
+package-dir = { "" = "python" }
+
+# Automatically find subpackages inside python/
+[tool.setuptools.packages.find]
+where = ["python"]
+
+[tool.setuptools.package-data]
+"package" = ["data/*.csv"]

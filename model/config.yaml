@@ -1,0 +1,418 @@
+bn_fusing: false
+csim:
+  feature_order:
+  - p_beta
+  - p_energy
+  - p_x
+  - p_y
+  - p_z
+  - p_signal
+  - p_ccoords_0
+  - p_ccoords_1
+  - p_ccoords_2
+  - uni_event_id
+  - tc_id
+  file_path: /ceph/tlobmaier/objcond_new/training_data/category_one_exp1003_full/1.0/lm_0.02/csim
+csim_input: false
+dataset:
+  datapaths:
+  - /ceph/srv/tlobmaier/objcond/data/shower_cache_1x1/category_one_exp1003_full/1.0/lm_0.02/merged_tcs_1x1_flat_20_128/all_photons_cat_one
+  - /ceph/srv/tlobmaier/objcond/data/shower_cache_1x1/category_two_exp1003_full/1.0/lm_0.02/merged_tcs_1x1_flat_20_128/all_photons_cat_two
+  max_nodes: 128
+  overload: false
+  qkeras_datapath: /ceph/srv/tlobmaier/objcond/data/shower_cache_1x1/qkeras_training_category_one_and_two_full_exp1003_flat_20_128
+  remote_datapath: qkeras_training_category_one_and_two_full_exp1003_flat_20_128
+  remote_raw_datapaths:
+  - all_photons_cat_one
+  - all_photons_cat_two
+  save: false
+  scale_factors:
+    tc_energy:
+      offset: 0
+      scale: 8
+    tc_time_cal:
+      offset: 0
+      scale: 0.25
+    x:
+      offset: 0
+      scale: 1.27
+    y:
+      offset: 0
+      scale: 1.27
+    z:
+      offset: 0.46
+      scale: 1.52
+  scale_input: true
+  scale_input_xyz: true
+debug: false
+entity: gnnetm
+env_script: /work/tlobmaier/objcond/objcond/fulltrain/scripts/setup_train_gpu.sh
+extra_bn_quantizer: false
+gridstorage: /home/tlobmaier/gridstorage
+iteration: 2
+matching:
+  cell_selection:
+  - 6965
+  - 7109
+  - 7400
+  - 7256
+  - 6968
+  - 7253
+  - 7397
+  - 7112
+  - 7398
+  - 6967
+  - 7111
+  - 7254
+  - 7255
+  - 7399
+  - 7110
+  - 6966
+  eventt0_path: /ceph/ihaide/gnnetm/localcosmic/tc_run/r02882/eventt0/separated
+  timing_selection:
+  - 0
+  - 250
+metrics:
+  add_resolution_err: true
+  angles:
+    barrel:
+    - 0.562
+    - 2.246
+    bwd:
+    - 2.281
+    - 2.707
+    full:
+    - 0
+    - 3.14
+    fwd:
+    - 0.216
+    - 0.548
+  correct_through_fit: true
+  energy_range:
+  - 0.05
+  - 7
+  energy_step: 0.05
+  evaluation_points:
+  - 0.2
+  - 0.5
+  evaluation_xerr: 0.05
+  features:
+  - p_energy
+  - p_x
+  - p_y
+  - p_z
+  - p_signal
+  - p_ccoords_0
+  - p_ccoords_1
+  - p_ccoords_2
+  - p_beta
+  overload: false
+  signal_efficiency: 0.95
+model:
+  ccoord: 3
+  concatenate_13_quantizer: quantized_linear(8,2,1, qnoise_factor=1.0, alpha=1)
+  concatenate_16_quantizer: quantized_linear(8,2,1, qnoise_factor=1.0, alpha=1)
+  concatenate_6_quantizer: quantized_linear(8,2,1, qnoise_factor=1.0, alpha=1)
+  dense_0_activation: quantized_relu(8,1)
+  dense_0_bias_quantizer: null
+  dense_0_dim: 8
+  dense_0_kernel_quantizer: quantized_linear(8,0,1,alpha=1,qnoise_factor=1.0)
+  dense_0_output_quantizer: null
+  dense_14_activation: quantized_relu(8,1)
+  dense_14_bias_quantizer: null
+  dense_14_dim: 32
+  dense_14_kernel_quantizer: quantized_linear(8,0,1,alpha=1,qnoise_factor=1.0)
+  dense_14_output_quantizer: null
+  dense_15_activation: quantized_relu(8,1)
+  dense_15_bias_quantizer: null
+  dense_15_dim: 16
+  dense_15_kernel_quantizer: quantized_linear(8,0,1,alpha=1,qnoise_factor=1.0)
+  dense_15_output_quantizer: null
+  dense_17_activation: quantized_relu(8,1)
+  dense_17_bias_quantizer: null
+  dense_17_dim: 16
+  dense_17_kernel_quantizer: quantized_linear(8,0,1,alpha=1,qnoise_factor=1.0)
+  dense_17_output_quantizer: null
+  dense_1_activation: quantized_relu(8,1)
+  dense_1_bias_quantizer: null
+  dense_1_dim: 8
+  dense_1_kernel_quantizer: quantized_linear(8,0,1,alpha=1,qnoise_factor=1.0)
+  dense_1_output_quantizer: null
+  dense_2_activation: quantized_relu(8,1)
+  dense_2_bias_quantizer: null
+  dense_2_dim: 16
+  dense_2_kernel_quantizer: quantized_linear(8,0,1,alpha=1,qnoise_factor=1.0)
+  dense_2_output_quantizer: null
+  dense_7_activation: quantized_relu(8,1)
+  dense_7_bias_quantizer: null
+  dense_7_dim: 32
+  dense_7_kernel_quantizer: quantized_linear(8,0,1,alpha=1,qnoise_factor=1.0)
+  dense_7_output_quantizer: null
+  dense_8_activation: quantized_relu(8,1)
+  dense_8_bias_quantizer: null
+  dense_8_dim: 16
+  dense_8_kernel_quantizer: quantized_linear(8,0,1,alpha=1,qnoise_factor=1.0)
+  dense_8_output_quantizer: null
+  dense_9_activation: quantized_relu(8,1)
+  dense_9_bias_quantizer: null
+  dense_9_dim: 16
+  dense_9_kernel_quantizer: quantized_linear(8,0,1,alpha=1,qnoise_factor=1.0)
+  dense_9_output_quantizer: null
+  gravnet_12_average_divider_quantizer: quantized_linear(8,2,1,alpha=1,qnoise_factor=1.0)
+  gravnet_12_average_kernel_quantizer: quantized_linear(8,2,1,alpha=1,qnoise_factor=1.0)
+  gravnet_12_distance_quantizer: quantized_linear(16,8,1, qnoise_factor=1.0, alpha=1)
+  gravnet_12_distance_weighting_alpha: 10
+  gravnet_12_distance_weighting_epsilon: 0.01
+  gravnet_12_distance_weighting_exponential_quantizer: null
+  gravnet_12_distance_weighting_linear_quantizer: null
+  gravnet_12_distance_weighting_quadratic_quantizer: null
+  gravnet_12_k: 8
+  gravnet_12_max_distance: 100
+  gravnet_12_multiply_quantizer: quantized_linear(8,2,1,alpha=1,qnoise_factor=1.0)
+  gravnet_5_average_divider_quantizer: quantized_linear(8,2,1,alpha=1,qnoise_factor=1.0)
+  gravnet_5_average_kernel_quantizer: quantized_linear(8,2,1,alpha=1,qnoise_factor=1.0)
+  gravnet_5_distance_quantizer: quantized_linear(16,8,1, qnoise_factor=1.0, alpha=1)
+  gravnet_5_distance_weighting_alpha: 10
+  gravnet_5_distance_weighting_epsilon: 0.01
+  gravnet_5_distance_weighting_exponential_quantizer: null
+  gravnet_5_distance_weighting_linear_quantizer: null
+  gravnet_5_distance_weighting_quadratic_quantizer: null
+  gravnet_5_k: 8
+  gravnet_5_max_distance: 100
+  gravnet_5_multiply_quantizer: quantized_linear(8,2,1,alpha=1,qnoise_factor=1.0)
+  linear_10_coordinate_bias_quantizer: null
+  linear_10_coordinate_dim: 6
+  linear_10_coordinate_kernel_quantizer: quantized_linear(8,0,1,alpha=1,qnoise_factor=1.0)
+  linear_10_coordinate_output_quantizer: quantized_linear(8,1,1,alpha=1,qnoise_factor=1.0)
+  linear_11_feature_bias_quantizer: null
+  linear_11_feature_dim: 8
+  linear_11_feature_kernel_quantizer: quantized_linear(8,0,1,alpha=1,qnoise_factor=1.0)
+  linear_11_feature_output_quantizer: quantized_linear(8,1,1,alpha=1,qnoise_factor=1.0)
+  linear_3_coordinate_bias_quantizer: null
+  linear_3_coordinate_dim: 6
+  linear_3_coordinate_kernel_quantizer: quantized_linear(8,0,1,alpha=1,qnoise_factor=1.0)
+  linear_3_coordinate_output_quantizer: quantized_linear(8,1,1,alpha=1,qnoise_factor=1.0)
+  linear_4_feature_bias_quantizer: null
+  linear_4_feature_dim: 8
+  linear_4_feature_kernel_quantizer: quantized_linear(8,0,1,alpha=1,qnoise_factor=1.0)
+  linear_4_feature_output_quantizer: quantized_linear(8,1,1,alpha=1,qnoise_factor=1.0)
+  model_name: CaloClusterNet_AMD_quantized
+  pID: 2
+  p_beta_activation: quantized_sigmoid(10,1, use_real_sigmoid=True)
+  p_beta_bias_quantizer: null
+  p_beta_kernel_quantizer: quantized_linear(16,2,1, qnoise_factor=1.0, alpha=1)
+  p_beta_output_quantizer: quantized_linear(16,5,1, qnoise_factor=1.0, alpha=1)
+  p_ccoords_activation: null
+  p_ccoords_bias_quantizer: null
+  p_ccoords_kernel_quantizer: quantized_linear(8,1,1, qnoise_factor=1.0, alpha=1)
+  p_ccoords_output_quantizer: quantized_linear(16,4,1, qnoise_factor=1.0, alpha=1)
+  p_energy_activation: quantized_relu(15,4)
+  p_energy_bias_quantizer: null
+  p_energy_kernel_quantizer: quantized_linear(8,1,1, qnoise_factor=1.0, alpha=1)
+  p_energy_output_quantizer: null
+  p_signal_bias_quantizer: null
+  p_signal_kernel_quantizer: quantized_linear(8,1,1, qnoise_factor=1.0, alpha=1)
+  p_signal_output_quantizer: quantized_linear(16,4,1, qnoise_factor=1.0, alpha=1)
+  p_tpos_activation: null
+  p_tpos_bias_quantizer: null
+  p_tpos_kernel_quantizer: quantized_linear(8,1,1, qnoise_factor=1.0, alpha=1)
+  p_tpos_output_quantizer: quantized_linear(16,4,1, qnoise_factor=1.0, alpha=1)
+  use_manhattan: true
+model_path: /pnfs/gridka.de/belle/disk-only/LOCAL/user/lobmaier/objcond/amd_8int_flat_20_09_Dec/iteration_2
+number_of_retrainings: 3
+old_model:
+  model_name: model_full.h5
+  model_path: objcond/amd_8int_1x1_18_08
+  use_manhattan: true
+output:
+  base_path: /ceph/srv/tlobmaier/objcond/results/gnn/qkeras
+  plotting: false
+  run_name: amd_8int_flat_20_09_Dec
+plotting:
+  bckg_str: Run-Independent Background, Rel. 08, Exp. 1003
+  det_labels:
+    barrel: Barrel
+    bwd: Backward Endcap
+    full: Full Detector
+    fwd: Forward Endcap
+  extra_plotpath: gnn
+  oc_label: GNN-ETM
+  plot_eff_y_range:
+  - 0
+  - 1.2
+  plot_pure_y_range:
+  - 0
+  - 1.2
+  plot_x_range:
+  - 0
+  - 7
+  plotpath: /work/tlobmaier/Plots/objcond
+  reso_hist_bins:
+  - -1
+  - 1
+  - 0.02
+  reso_labels:
+    energy: ((E$_\mathrm{pred}$ - E$_\mathrm{shower}$) / E$_\mathrm{shower}$)
+    phi: ($\phi_\mathrm{pred}$ - $\phi_\mathrm{shower}$)
+    theta: ($\theta_\mathrm{pred}$ - $\theta_\mathrm{shower}$)
+    x: ($x_\mathrm{pred}$ - $x_\mathrm{shower}$)
+    y: ($y_\mathrm{pred}$ - $y_\mathrm{shower}$)
+    z: ($z_\mathrm{pred}$ - $z_\mathrm{shower}$)
+  reso_ranges:
+    energy:
+    - 0
+    - 0.5
+    phi:
+    - 0
+    - 0.14
+    theta:
+    - 0
+    - 0.14
+    x:
+    - 0
+    - 0.3
+    y:
+    - 0
+    - 0.3
+    z:
+    - 0
+    - 0.3
+prediction:
+  alpha_scale: 1
+  auto_cluster_cut_file: /ceph/tlobmaier/objcond_new/training_data/overlapping_dataset_noBkg/1.0/lm_0.02/merged_tcs_1x1_tower_5x5_128/0_photons/merged_tc_data_1x1_tower_5x5_128_0.parquet
+  beta: 0
+  bits: 16
+  bits_before_dec: 3
+  central: false
+  clustercut: auto
+  features:
+  - tc_energy
+  - tc_time_cal
+  - x
+  - y
+  - z
+  file_path:
+  - /ceph/tlobmaier/objcond_new/training_data/single_photon_noBkg/1.0/lm_0.02/merged_tcs_1x1_flat_20_128/1_photons/
+  - /ceph/tlobmaier/objcond_new/training_data/bbbar_exp0_oct25/1.0/lm_0.02/merged_tcs_1x1_flat_20_128/
+  folder:
+  - single_photon_noBkg
+  - bbbar_exp0_oct25
+  max_energy: 2
+  mc: true
+  metric_energies:
+  - 0.2
+  - 1
+  min_energy: 0.01
+  model_name: model_full.h5
+  normalize_position: true
+  normalize_time: true
+  nphotons: 300
+  pos_diff: 10
+  quantization: true
+  set_fused_weights: false
+  symmetric_quant: 1
+  tower_CP: false
+  truth:
+  - is_photon
+  - train_E
+  - train_x
+  - train_y
+  - train_z
+  - objidx
+  - mc_matched
+  use_manhattan: true
+project_name: AMD_V2
+pruning:
+  begin_step: 15000
+  frequency: 100
+  prune: true
+  sparsity: 0.4
+qnoise:
+  interval: 1
+  last_epoch: 300
+  qnoise: true
+  schedule_function: 'lambda e: 0 if e <= 100 else (1 - ((300 - e) / (300 - 100))**3
+    if e <= 300 else 1)'
+  step: 0
+reloading: false
+remote:
+  code: /work/tlobmaier
+  env_script: /work/tlobmaier/objcond/objcond/fulltrain/modules/setup_remote_full_gpu.sh
+remote_env_script: /work/tlobmaier/objcond/objcond/fulltrain/modules/setup_remote_full_gpu.sh
+remote_env_script_name: setup_remote_full_gpu.sh
+remote_train_script: /work/tlobmaier/objcond/objcond/fulltrain/modules/setup_training.sh
+requantization: false
+requirements_file: /work/tlobmaier/objcond/objcond/fulltrain/config/condor_requirements_gpu.txt
+train:
+  background_loss: true
+  batch_size: 432
+  decay: 2
+  early_stopping: true
+  early_stopping_start: 40
+  energy_scaling_loss: true
+  epochs: 600
+  feature_onset: 0
+  features:
+  - tc_energy
+  - tc_time_cal
+  - x
+  - y
+  - z
+  id_loss: false
+  learning_rate: 0.0005
+  loss_types:
+  - loss
+  - log_attloss
+  - log_betaloss
+  - log_E_loss
+  - log_posl
+  - log_reploss
+  - log_signal_loss
+  - log_suppress_noise_loss
+  min_lr: 1.0e-06
+  no_stopping_features: true
+  num_workers: 5
+  only_c_loss: false
+  optimiser: Adam
+  patience: 15
+  position_scaling_loss: false
+  reduce_patience: 50
+  sample_file: /ceph/tlobmaier/objcond_new/training_data/category_one_exp1003_testdata/1.0/lm_0.02/merged_tcs_1x1_tower_5x5_128/6_photons/merged_tc_data_1x1_tower_5x5_128_80.parquet
+  sample_file_name: merged_tc_data_1x1_tower_5x5_128_80.parquet
+  samples: 450000
+  seed_energy: 0
+  seeding_loss: false
+  separation_focus: 1
+  stopping_patience: 70
+  tower_CP: false
+  truth:
+  - is_photon
+  - train_E
+  - train_x
+  - train_y
+  - train_z
+  - objidx
+  - mc_matched
+  - tc_energy
+  use_e_log_loss: false
+  val_batch_size: 512
+  val_split: 0.01
+trigger:
+  datapath:
+  - /ceph/tlobmaier/objcond_new/training_data/single_photon_noBkg/1.0/lm_0.02/trgcluster
+  max_energy: 2
+  min_energy: 0.01
+  path_replace_str:
+  - /trgcluster
+  - /merged_tcs
+  pos_diff: 40
+  replace_str:
+  - trg_cluster_
+  - merged_tcs_
+  savepath:
+  - /ceph/tlobmaier/objcond_new/training_data/single_photon_noBkg/1.0/lm_0.02/trgcluster
+  trg_label: ICN-ETM
+work:
+  log: /work/tlobmaier/LogFiles
+  plot: /work/tlobmaier/Plots
+  repo: /work/tlobmaier/objcond/objcond/fulltrain

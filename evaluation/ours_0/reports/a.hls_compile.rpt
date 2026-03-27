@@ -1,0 +1,386 @@
+
+
+================================================================
+== Synthesis Summary Report of 'a'
+================================================================
++ General Information: 
+    * Date:           Tue Mar  3 18:00:41 2026
+    * Version:        2024.2.1 (Build 5263293 on Dec 12 2024)
+    * Project:        a
+    * Solution:       hls (Vitis Kernel Flow Target)
+    * Product family: versalaicore
+    * Target device:  xcvc1902-vsva2197-2MP-e-S
+    
+
++ Performance & Resource Estimates: 
+    
+    PS: '+' for module; 'o' for loop; '*' for dataflow
+    +--------------------------------------------------------------------------+------+------+---------+---------+----------+---------+------+----------+------+----------+------------+------------+-----+
+    |                                  Modules                                 | Issue|      | Latency | Latency | Iteration|         | Trip |          |      |          |            |            |     |
+    |                                  & Loops                                 | Type | Slack| (cycles)|   (ns)  |  Latency | Interval| Count| Pipelined| BRAM |    DSP   |     FF     |     LUT    | URAM|
+    +--------------------------------------------------------------------------+------+------+---------+---------+----------+---------+------+----------+------+----------+------------+------------+-----+
+    |+ a                                                                       |     -|  0.03|        -|        -|         -|        -|     -|        no|     -|   21 (1%)|  2646 (~0%)|  3368 (~0%)|    -|
+    | + dataflow_parent_loop_proc                                              |     -|  0.03|        -|        -|         -|        -|     -|        no|     -|   21 (1%)|  2319 (~0%)|  3065 (~0%)|    -|
+    |  o VITIS_LOOP_15_1                                                       |     -|  2.09|        -|        -|       141|        -|     -|        no|     -|         -|           -|           -|    -|
+    |   + dataflow_in_loop_VITIS_LOOP_15_1_1*                                  |     -|  0.03|      139|  397.123|         -|      128|     -|  dataflow|     -|   21 (1%)|  2255 (~0%)|  2893 (~0%)|    -|
+    |    + multicast_and_forward_ap_fixed_16_4_5_3_0_5_1_2_128_0_s             |     -|  0.53|      129|  368.553|         -|      129|     -|        no|     -|         -|    10 (~0%)|    45 (~0%)|    -|
+    |     o VITIS_LOOP_21_1                                                    |     -|  2.09|      127|  362.839|         1|        1|   128|  yes(flp)|     -|         -|           -|           -|    -|
+    |    + dense_relu_ap_fixed_ap_ufixed_ap_fixed_ap_fixed_ap_fixed_5_8_128_1  |     -|  0.03|      136|  388.552|         -|      136|     -|        no|     -|   9 (~0%)|   957 (~0%)|  1212 (~0%)|    -|
+    |     o VITIS_LOOP_30_1                                                    |     -|  2.09|      134|  382.838|         8|        1|   128|  yes(flp)|     -|         -|           -|           -|    -|
+    |    + dense_relu_ap_fixed_ap_ufixed_ap_fixed_ap_fixed_ap_fixed_5_8_128_s  |     -|  0.03|      137|  391.409|         -|      137|     -|        no|     -|  12 (~0%)|   950 (~0%)|  1224 (~0%)|    -|
+    |     o VITIS_LOOP_30_1                                                    |     -|  2.09|      135|  385.695|         9|        1|   128|  yes(flp)|     -|         -|           -|           -|    -|
+    |    + pack_ap_ufixed_8_1_5_3_0_64_8_8_1_128_s                             |     -|  0.44|      129|  368.553|         -|      129|     -|        no|     -|         -|     9 (~0%)|    42 (~0%)|    -|
+    |     o VITIS_LOOP_34_1                                                    |     -|  2.09|      127|  362.839|         1|        1|   128|  yes(flp)|     -|         -|           -|           -|    -|
+    |    + pack_ap_ufixed_8_1_5_3_0_64_8_8_1_128_2                             |     -|  0.44|      129|  368.553|         -|      129|     -|        no|     -|         -|     9 (~0%)|    42 (~0%)|    -|
+    |     o VITIS_LOOP_34_1                                                    |     -|  2.09|      127|  362.839|         1|        1|   128|  yes(flp)|     -|         -|           -|           -|    -|
+    +--------------------------------------------------------------------------+------+------+---------+---------+----------+---------+------+----------+------+----------+------------+------------+-----+
+
+
+================================================================
+== HW Interfaces
+================================================================
+* S_AXILITE Interfaces
++---------------+------------+---------------+--------+----------+
+| Interface     | Data Width | Address Width | Offset | Register |
++---------------+------------+---------------+--------+----------+
+| s_axi_control | 32         | 5             | 16     | 0        |
++---------------+------------+---------------+--------+----------+
+
+* S_AXILITE Registers
++---------------+-----------+--------+-------+--------+----------------------------------+------------------------------------------------------------------------------------+
+| Interface     | Register  | Offset | Width | Access | Description                      | Bit Fields                                                                         |
++---------------+-----------+--------+-------+--------+----------------------------------+------------------------------------------------------------------------------------+
+| s_axi_control | CTRL      | 0x00   | 32    | RW     | Control signals                  | 0=AP_START 1=AP_DONE 2=AP_IDLE 3=AP_READY 4=AP_CONTINUE 7=AUTO_RESTART 9=INTERRUPT |
+| s_axi_control | GIER      | 0x04   | 32    | RW     | Global Interrupt Enable Register | 0=Enable                                                                           |
+| s_axi_control | IP_IER    | 0x08   | 32    | RW     | IP Interrupt Enable Register     | 0=CHAN0_INT_EN 1=CHAN1_INT_EN                                                      |
+| s_axi_control | IP_ISR    | 0x0c   | 32    | RW     | IP Interrupt Status Register     | 0=CHAN0_INT_ST 1=CHAN1_INT_ST                                                      |
+| s_axi_control | numEvents | 0x10   | 32    | W      | Data signal of numEvents         |                                                                                    |
++---------------+-----------+--------+-------+--------+----------------------------------+------------------------------------------------------------------------------------+
+
+* AXIS
++---------------+-----------+---------------+-------+-------+-------+--------+-------+--------+
+| Interface     | Direction | Register Mode | TDATA | TKEEP | TLAST | TREADY | TSTRB | TVALID |
++---------------+-----------+---------------+-------+-------+-------+--------+-------+--------+
+| energy_stream | out       | both          | 16    |       |       | 1      |       | 1      |
+| input_stream  | in        | both          | 80    |       |       | 1      |       | 1      |
+| layer_0_plio  | out       | both          | 64    | 8     | 1     | 1      | 8     | 1      |
+| layer_1_plio  | out       | both          | 64    | 8     | 1     | 1      | 8     | 1      |
++---------------+-----------+---------------+-------+-------+-------+--------+-------+--------+
+
+* Other Ports
++-------------+-----------+----------+
+| Port        | Direction | Bitwidth |
++-------------+-----------+----------+
+| event_done  | out       | 1        |
+| event_start | out       | 1        |
++-------------+-----------+----------+
+
+* TOP LEVEL CONTROL
++-----------+---------------+-----------+
+| Interface | Type          | Ports     |
++-----------+---------------+-----------+
+| ap_clk    | clock         | ap_clk    |
+| ap_rst_n  | reset         | ap_rst_n  |
+| interrupt | interrupt     | interrupt |
+| ap_ctrl   | ap_ctrl_chain |           |
++-----------+---------------+-----------+
+
+
+================================================================
+== SW I/O Information
+================================================================
+* Top Function Arguments
++---------------+-----------+----------------------------------------------------------------+
+| Argument      | Direction | Datatype                                                       |
++---------------+-----------+----------------------------------------------------------------+
+| numEvents     | in        | int&                                                           |
+| input_stream  | in        | stream<std::array<ap_fixed<16, 4, AP_TRN, AP_WRAP, 0>, 5>, 0>* |
+| energy_stream | out       | stream<std::array<ap_fixed<16, 4, AP_TRN, AP_WRAP, 0>, 1>, 0>* |
+| layer_0_plio  | out       | stream<hls::axis<ap_uint<64>, 0, 0, 0, '8', false>, 0>*        |
+| layer_1_plio  | out       | stream<hls::axis<ap_uint<64>, 0, 0, 0, '8', false>, 0>*        |
++---------------+-----------+----------------------------------------------------------------+
+
+* SW-to-HW Mapping
++---------------+---------------+-----------+-------------------------------------+
+| Argument      | HW Interface  | HW Type   | HW Info                             |
++---------------+---------------+-----------+-------------------------------------+
+| numEvents     | s_axi_control | register  | name=numEvents offset=0x10 range=32 |
+| input_stream  | input_stream  | interface |                                     |
+| energy_stream | energy_stream | interface |                                     |
+| layer_0_plio  | layer_0_plio  | interface |                                     |
+| layer_1_plio  | layer_1_plio  | interface |                                     |
++---------------+---------------+-----------+-------------------------------------+
+
+
+================================================================
+== Bind Op Report
+================================================================
++-------------------------------------------------------------------------+-----+--------+--------------+-----------+------------------------+---------+
+| Name                                                                    | DSP | Pragma | Variable     | Op        | Impl                   | Latency |
++-------------------------------------------------------------------------+-----+--------+--------------+-----------+------------------------+---------+
+| + a                                                                     | 21  |        |              |           |                        |         |
+|  + dataflow_parent_loop_proc                                            | 21  |        |              |           |                        |         |
+|   + dataflow_in_loop_VITIS_LOOP_15_1_1                                  | 21  |        |              |           |                        |         |
+|    + multicast_and_forward_ap_fixed_16_4_5_3_0_5_1_2_128_0_s            | 0   |        |              |           |                        |         |
+|      ii_fu_89_p2                                                        |     |        | ii           | add       | fabric                 | 0       |
+|      icmp_ln21_fu_108_p2                                                |     |        | icmp_ln21    | seteq     | auto                   | 0       |
+|    + dense_relu_ap_fixed_ap_ufixed_ap_fixed_ap_fixed_ap_fixed_5_8_128_1 | 9   |        |              |           |                        |         |
+|      ii_fu_161_p2                                                       |     |        | ii           | add       | fabric                 | 0       |
+|      sub_ln38_fu_331_p2                                                 |     |        | sub_ln38     | sub       | fabric                 | 0       |
+|      sub_ln38_1_fu_337_p2                                               |     |        | sub_ln38_1   | sub       | fabric                 | 0       |
+|      mac_muladd_16s_7ns_19s_23_4_1_U13                                  | 1   |        | mul_ln38     | mul       | dsp_slice              | 3       |
+|      mac_muladd_16s_6ns_18ns_22_4_1_U14                                 | 1   |        | mul_ln38_23  | mul       | dsp_slice              | 3       |
+|      grp_fu_1167_p2                                                     |     |        | sub_ln38_2   | sub       | fabric                 | 0       |
+|      mac_muladd_16s_7ns_24s_24_4_1_U17                                  | 1   |        | mul_ln38_1   | mul       | dsp_slice              | 3       |
+|      mac_muladd_16s_6ns_18ns_22_4_1_U15                                 | 1   |        | mul_ln38_2   | mul       | dsp_slice              | 3       |
+|      mac_muladd_16s_6ns_22s_23_4_1_U18                                  | 1   |        | mul_ln38_3   | mul       | dsp_slice              | 3       |
+|      mac_muladd_16s_7s_19ns_22_4_1_U16                                  | 1   |        | mul_ln38_4   | mul       | dsp_slice              | 3       |
+|      mac_muladd_16s_7s_24s_24_4_1_U19                                   | 1   |        | mul_ln38_5   | mul       | dsp_slice              | 3       |
+|      mac_muladd_16s_7s_24s_24_4_1_U19                                   | 1   |        | sext_ln38_7  | sext      | dsp_slice              | 3       |
+|      sub_ln38_5_fu_398_p2                                               |     |        | sub_ln38_5   | sub       | fabric                 | 0       |
+|      sub_ln38_6_fu_404_p2                                               |     |        | sub_ln38_6   | sub       | fabric                 | 0       |
+|      mac_muladd_16s_7s_22s_23_4_1_U20                                   | 1   |        | mul_ln38_6   | mul       | dsp_slice              | 3       |
+|      sub_ln38_7_fu_424_p2                                               |     |        | sub_ln38_7   | sub       | fabric                 | 0       |
+|      mac_muladd_16s_7s_24s_25_4_1_U21                                   | 1   |        | mul_ln38_7   | mul       | dsp_slice              | 3       |
+|      mac_muladd_16s_7s_24s_25_4_1_U21                                   | 1   |        | sext_ln38_12 | sext      | dsp_slice              | 3       |
+|      add_ln49_fu_494_p2                                                 |     |        | add_ln49     | add       | fabric                 | 0       |
+|      add_ln49_1_fu_499_p2                                               |     |        | add_ln49_1   | add       | fabric                 | 0       |
+|      add_ln49_2_fu_434_p2                                               |     |        | add_ln49_2   | add       | fabric                 | 0       |
+|      mac_muladd_16s_7ns_19s_23_4_1_U13                                  | 1   |        | add_ln49_3   | add       | dsp_slice              | 3       |
+|      mac_muladd_16s_6ns_18ns_22_4_1_U14                                 | 1   |        | add_ln49_4   | add       | dsp_slice              | 3       |
+|      mac_muladd_16s_6ns_18ns_22_4_1_U15                                 | 1   |        | add_ln49_6   | add       | dsp_slice              | 3       |
+|      add_ln49_7_fu_459_p2                                               |     |        | add_ln49_7   | add       | fabric                 | 0       |
+|      mac_muladd_16s_6ns_22s_23_4_1_U18                                  | 1   |        | add_ln49_8   | add       | dsp_slice              | 3       |
+|      mac_muladd_16s_7s_19ns_22_4_1_U16                                  | 1   |        | add_ln49_9   | add       | dsp_slice              | 3       |
+|      add_ln49_11_fu_519_p2                                              |     |        | add_ln49_11  | add       | fabric                 | 0       |
+|      add_ln49_12_fu_523_p2                                              |     |        | add_ln49_12  | add       | fabric                 | 0       |
+|      add_ln49_13_fu_529_p2                                              |     |        | add_ln49_13  | add       | fabric                 | 0       |
+|      add_ln49_14_fu_535_p2                                              |     |        | add_ln49_14  | add       | fabric                 | 0       |
+|      add_ln49_15_fu_541_p2                                              |     |        | add_ln49_15  | add       | fabric                 | 0       |
+|      add_ln49_16_fu_478_p2                                              |     |        | add_ln49_16  | add       | fabric                 | 0       |
+|      mac_muladd_16s_7s_22s_23_4_1_U20                                   | 1   |        | add_ln49_17  | add       | dsp_slice              | 3       |
+|      mac_muladd_16s_7ns_24s_24_4_1_U17                                  | 1   |        | add_ln49_18  | add       | dsp_slice              | 3       |
+|      mac_muladd_16s_7s_24s_24_4_1_U19                                   | 1   |        | add_ln49_19  | add       | dsp_slice              | 3       |
+|      mac_muladd_16s_7s_24s_25_4_1_U21                                   | 1   |        | add_ln49_22  | add       | dsp_slice              | 3       |
+|      add_ln49_23_fu_553_p2                                              |     |        | add_ln49_23  | add       | fabric                 | 0       |
+|      add_ln49_24_fu_557_p2                                              |     |        | add_ln49_24  | add       | fabric                 | 0       |
+|      icmp_ln56_fu_563_p2                                                |     |        | icmp_ln56    | setgt     | auto                   | 0       |
+|      icmp_ln58_fu_569_p2                                                |     |        | icmp_ln58    | setgt     | auto                   | 0       |
+|      xor_ln56_fu_585_p2                                                 |     |        | xor_ln56     | xor       | auto                   | 0       |
+|      and_ln58_fu_591_p2                                                 |     |        | and_ln58     | and       | auto                   | 0       |
+|      sparsemux_7_2_8_1_1_U5                                             |     |        | result_1     | sparsemux | onehotencoding_realdef | 0       |
+|      icmp_ln56_1_fu_931_p2                                              |     |        | icmp_ln56_1  | setgt     | auto                   | 0       |
+|      icmp_ln58_1_fu_937_p2                                              |     |        | icmp_ln58_1  | setgt     | auto                   | 0       |
+|      xor_ln56_1_fu_953_p2                                               |     |        | xor_ln56_1   | xor       | auto                   | 0       |
+|      and_ln58_1_fu_959_p2                                               |     |        | and_ln58_1   | and       | auto                   | 0       |
+|      sparsemux_7_2_8_1_1_U10                                            |     |        | result_3     | sparsemux | onehotencoding_realdef | 0       |
+|      icmp_ln56_2_fu_625_p2                                              |     |        | icmp_ln56_2  | setgt     | auto                   | 0       |
+|      icmp_ln58_2_fu_631_p2                                              |     |        | icmp_ln58_2  | setgt     | auto                   | 0       |
+|      xor_ln56_2_fu_647_p2                                               |     |        | xor_ln56_2   | xor       | auto                   | 0       |
+|      and_ln58_2_fu_653_p2                                               |     |        | and_ln58_2   | and       | auto                   | 0       |
+|      sparsemux_7_2_8_1_1_U6                                             |     |        | result_5     | sparsemux | onehotencoding_realdef | 0       |
+|      icmp_ln56_3_fu_687_p2                                              |     |        | icmp_ln56_3  | setgt     | auto                   | 0       |
+|      icmp_ln58_3_fu_693_p2                                              |     |        | icmp_ln58_3  | setgt     | auto                   | 0       |
+|      xor_ln56_3_fu_709_p2                                               |     |        | xor_ln56_3   | xor       | auto                   | 0       |
+|      and_ln58_3_fu_715_p2                                               |     |        | and_ln58_3   | and       | auto                   | 0       |
+|      sparsemux_7_2_8_1_1_U7                                             |     |        | result_7     | sparsemux | onehotencoding_realdef | 0       |
+|      icmp_ln56_4_fu_749_p2                                              |     |        | icmp_ln56_4  | setgt     | auto                   | 0       |
+|      icmp_ln58_4_fu_755_p2                                              |     |        | icmp_ln58_4  | setgt     | auto                   | 0       |
+|      xor_ln56_4_fu_771_p2                                               |     |        | xor_ln56_4   | xor       | auto                   | 0       |
+|      and_ln58_4_fu_777_p2                                               |     |        | and_ln58_4   | and       | auto                   | 0       |
+|      sparsemux_7_2_8_1_1_U8                                             |     |        | result_9     | sparsemux | onehotencoding_realdef | 0       |
+|      icmp_ln56_5_fu_993_p2                                              |     |        | icmp_ln56_5  | setgt     | auto                   | 0       |
+|      icmp_ln58_5_fu_998_p2                                              |     |        | icmp_ln58_5  | setgt     | auto                   | 0       |
+|      xor_ln56_5_fu_1012_p2                                              |     |        | xor_ln56_5   | xor       | auto                   | 0       |
+|      and_ln58_5_fu_1018_p2                                              |     |        | and_ln58_5   | and       | auto                   | 0       |
+|      sparsemux_7_2_8_1_1_U11                                            |     |        | result_11    | sparsemux | onehotencoding_realdef | 0       |
+|      icmp_ln56_6_fu_811_p2                                              |     |        | icmp_ln56_6  | setgt     | auto                   | 0       |
+|      icmp_ln58_6_fu_817_p2                                              |     |        | icmp_ln58_6  | setgt     | auto                   | 0       |
+|      xor_ln56_6_fu_833_p2                                               |     |        | xor_ln56_6   | xor       | auto                   | 0       |
+|      and_ln58_6_fu_839_p2                                               |     |        | and_ln58_6   | and       | auto                   | 0       |
+|      sparsemux_7_2_8_1_1_U9                                             |     |        | result_13    | sparsemux | onehotencoding_realdef | 0       |
+|      icmp_ln56_7_fu_1052_p2                                             |     |        | icmp_ln56_7  | setgt     | auto                   | 0       |
+|      icmp_ln58_7_fu_1058_p2                                             |     |        | icmp_ln58_7  | setgt     | auto                   | 0       |
+|      xor_ln56_7_fu_1074_p2                                              |     |        | xor_ln56_7   | xor       | auto                   | 0       |
+|      and_ln58_7_fu_1080_p2                                              |     |        | and_ln58_7   | and       | auto                   | 0       |
+|      sparsemux_7_2_8_1_1_U12                                            |     |        | result_15    | sparsemux | onehotencoding_realdef | 0       |
+|      icmp_ln30_fu_213_p2                                                |     |        | icmp_ln30    | seteq     | auto                   | 0       |
+|    + dense_relu_ap_fixed_ap_ufixed_ap_fixed_ap_fixed_ap_fixed_5_8_128_s | 12  |        |              |           |                        |         |
+|      ii_fu_181_p2                                                       |     |        | ii           | add       | fabric                 | 0       |
+|      mac_muladd_16s_5ns_19ns_22_4_1_U48                                 | 1   |        | mul_ln38_1   | mul       | dsp_slice              | 3       |
+|      sub_ln38_8_fu_337_p2                                               |     |        | sub_ln38_8   | sub       | fabric                 | 0       |
+|      sub_ln38_9_fu_347_p2                                               |     |        | sub_ln38_9   | sub       | fabric                 | 0       |
+|      mac_muladd_16s_5ns_20ns_22_4_1_U51                                 | 1   |        | mul_ln38_5   | mul       | dsp_slice              | 3       |
+|      add_ln38_1_fu_406_p2                                               |     |        | add_ln38_1   | add       | fabric                 | 0       |
+|      mac_muladd_16s_7ns_24s_24_4_1_U54                                  | 1   |        | mul_ln38     | mul       | dsp_slice              | 3       |
+|      mac_muladd_16s_8s_23s_24_4_1_U55                                   | 1   |        | mul_ln38_8   | mul       | dsp_slice              | 3       |
+|      mac_muladd_16s_7ns_19ns_23_4_1_U52                                 | 1   |        | mul_ln38_9   | mul       | dsp_slice              | 3       |
+|      mac_muladd_16s_7ns_24s_24_4_1_U50                                  | 1   |        | mul_ln38_10  | mul       | dsp_slice              | 3       |
+|      mac_muladd_16s_6ns_16ns_22_4_1_U49                                 | 1   |        | mul_ln38_11  | mul       | dsp_slice              | 3       |
+|      sub_ln38_11_fu_474_p2                                              |     |        | sub_ln38_11  | sub       | fabric                 | 0       |
+|      mac_muladd_16s_7s_23s_24_4_1_U53                                   | 1   |        | mul_ln38_12  | mul       | dsp_slice              | 3       |
+|      mac_muladd_16s_7s_23s_24_4_1_U53                                   | 1   |        | sext_ln38_13 | sext      | dsp_slice              | 3       |
+|      sub_ln38_12_fu_868_p2                                              |     |        | sub_ln38_12  | sub       | fabric                 | 0       |
+|      mul_16s_7ns_23_1_1_U39                                             | 1   |        | mul_ln38_13  | mul       | auto                   | 0       |
+|      mul_16s_8s_24_1_1_U38                                              | 1   |        | mul_ln38_14  | mul       | auto                   | 0       |
+|      mac_muladd_16s_8s_22s_24_4_1_U56                                   | 1   |        | mul_ln38_15  | mul       | dsp_slice              | 3       |
+|      mac_muladd_16s_7ns_23s_24_4_1_U57                                  | 1   |        | mul_ln38_16  | mul       | dsp_slice              | 3       |
+|      mac_muladd_16s_5ns_19ns_22_4_1_U48                                 | 1   |        | add_ln49_1   | add       | dsp_slice              | 3       |
+|      add_ln49_2_fu_614_p2                                               |     |        | add_ln49_2   | add       | fabric                 | 0       |
+|      add_ln49_3_fu_624_p2                                               |     |        | add_ln49_3   | add       | fabric                 | 0       |
+|      mac_muladd_16s_5ns_20ns_22_4_1_U51                                 | 1   |        | add_ln49_5   | add       | dsp_slice              | 3       |
+|      add_ln49_6_fu_884_p2                                               |     |        | add_ln49_6   | add       | fabric                 | 0       |
+|      mac_muladd_16s_8s_23s_24_4_1_U55                                   | 1   |        | add_ln49_8   | add       | dsp_slice              | 3       |
+|      mac_muladd_16s_7ns_19ns_23_4_1_U52                                 | 1   |        | add_ln49_9   | add       | dsp_slice              | 3       |
+|      mac_muladd_16s_6ns_16ns_22_4_1_U49                                 | 1   |        | add_ln49_11  | add       | dsp_slice              | 3       |
+|      add_ln49_13_fu_638_p2                                              |     |        | add_ln49_13  | add       | fabric                 | 0       |
+|      mac_muladd_16s_7s_23s_24_4_1_U53                                   | 1   |        | add_ln49_14  | add       | dsp_slice              | 3       |
+|      mac_muladd_16s_7ns_24s_24_4_1_U54                                  | 1   |        | add_ln49_15  | add       | dsp_slice              | 3       |
+|      add_ln49_26_fu_993_p2                                              |     |        | add_ln49_26  | add       | fabric                 | 0       |
+|      add_ln49_16_fu_899_p2                                              |     |        | add_ln49_16  | add       | fabric                 | 0       |
+|      mac_muladd_16s_7ns_24s_24_4_1_U50                                  | 1   |        | add_ln49_17  | add       | dsp_slice              | 3       |
+|      add_ln49_19_fu_908_p2                                              |     |        | add_ln49_19  | add       | fabric                 | 0       |
+|      add_ln49_27_fu_650_p2                                              |     |        | add_ln49_27  | add       | fabric                 | 0       |
+|      add_ln49_20_fu_654_p2                                              |     |        | add_ln49_20  | add       | fabric                 | 0       |
+|      mac_muladd_16s_8s_22s_24_4_1_U56                                   | 1   |        | add_ln49_21  | add       | dsp_slice              | 3       |
+|      mac_muladd_16s_7ns_23s_24_4_1_U57                                  | 1   |        | add_ln49_22  | add       | dsp_slice              | 3       |
+|      add_ln49_28_fu_1186_p2                                             |     |        | add_ln49_28  | add       | fabric                 | 0       |
+|      add_ln49_23_fu_1003_p2                                             |     |        | add_ln49_23  | add       | fabric                 | 0       |
+|      icmp_ln56_fu_913_p2                                                |     |        | icmp_ln56    | setgt     | auto                   | 0       |
+|      icmp_ln58_fu_919_p2                                                |     |        | icmp_ln58    | setgt     | auto                   | 0       |
+|      xor_ln56_fu_1019_p2                                                |     |        | xor_ln56     | xor       | auto                   | 0       |
+|      and_ln58_fu_1024_p2                                                |     |        | and_ln58     | and       | auto                   | 0       |
+|      sparsemux_7_2_8_1_1_U44                                            |     |        | result_1     | sparsemux | onehotencoding_realdef | 0       |
+|      icmp_ln56_1_fu_925_p2                                              |     |        | icmp_ln56_1  | setgt     | auto                   | 0       |
+|      icmp_ln58_1_fu_931_p2                                              |     |        | icmp_ln58_1  | setgt     | auto                   | 0       |
+|      xor_ln56_1_fu_947_p2                                               |     |        | xor_ln56_1   | xor       | auto                   | 0       |
+|      and_ln58_1_fu_953_p2                                               |     |        | and_ln58_1   | and       | auto                   | 0       |
+|      sparsemux_7_2_8_1_1_U43                                            |     |        | result_3     | sparsemux | onehotencoding_realdef | 0       |
+|      icmp_ln56_2_fu_660_p2                                              |     |        | icmp_ln56_2  | setgt     | auto                   | 0       |
+|      icmp_ln58_2_fu_666_p2                                              |     |        | icmp_ln58_2  | setgt     | auto                   | 0       |
+|      xor_ln56_2_fu_682_p2                                               |     |        | xor_ln56_2   | xor       | auto                   | 0       |
+|      and_ln58_2_fu_688_p2                                               |     |        | and_ln58_2   | and       | auto                   | 0       |
+|      sparsemux_7_2_8_1_1_U40                                            |     |        | result_5     | sparsemux | onehotencoding_realdef | 0       |
+|      icmp_ln56_3_fu_722_p2                                              |     |        | icmp_ln56_3  | setgt     | auto                   | 0       |
+|      icmp_ln58_3_fu_728_p2                                              |     |        | icmp_ln58_3  | setgt     | auto                   | 0       |
+|      xor_ln56_3_fu_744_p2                                               |     |        | xor_ln56_3   | xor       | auto                   | 0       |
+|      and_ln58_3_fu_750_p2                                               |     |        | and_ln58_3   | and       | auto                   | 0       |
+|      sparsemux_7_2_8_1_1_U41                                            |     |        | result_7     | sparsemux | onehotencoding_realdef | 0       |
+|      icmp_ln56_4_fu_784_p2                                              |     |        | icmp_ln56_4  | setgt     | auto                   | 0       |
+|      icmp_ln58_4_fu_790_p2                                              |     |        | icmp_ln58_4  | setgt     | auto                   | 0       |
+|      xor_ln56_4_fu_806_p2                                               |     |        | xor_ln56_4   | xor       | auto                   | 0       |
+|      and_ln58_4_fu_812_p2                                               |     |        | and_ln58_4   | and       | auto                   | 0       |
+|      sparsemux_7_2_8_1_1_U42                                            |     |        | result_9     | sparsemux | onehotencoding_realdef | 0       |
+|      icmp_ln56_5_fu_1056_p2                                             |     |        | icmp_ln56_5  | setgt     | auto                   | 0       |
+|      icmp_ln58_5_fu_1061_p2                                             |     |        | icmp_ln58_5  | setgt     | auto                   | 0       |
+|      xor_ln56_5_fu_1075_p2                                              |     |        | xor_ln56_5   | xor       | auto                   | 0       |
+|      and_ln58_5_fu_1081_p2                                              |     |        | and_ln58_5   | and       | auto                   | 0       |
+|      sparsemux_7_2_8_1_1_U45                                            |     |        | result_17    | sparsemux | onehotencoding_realdef | 0       |
+|      icmp_ln56_6_fu_1115_p2                                             |     |        | icmp_ln56_6  | setgt     | auto                   | 0       |
+|      icmp_ln58_6_fu_1120_p2                                             |     |        | icmp_ln58_6  | setgt     | auto                   | 0       |
+|      xor_ln56_6_fu_1134_p2                                              |     |        | xor_ln56_6   | xor       | auto                   | 0       |
+|      and_ln58_6_fu_1140_p2                                              |     |        | and_ln58_6   | and       | auto                   | 0       |
+|      sparsemux_7_2_8_1_1_U46                                            |     |        | result_19    | sparsemux | onehotencoding_realdef | 0       |
+|      icmp_ln56_7_fu_1174_p2                                             |     |        | icmp_ln56_7  | setgt     | auto                   | 0       |
+|      icmp_ln58_7_fu_1180_p2                                             |     |        | icmp_ln58_7  | setgt     | auto                   | 0       |
+|      xor_ln56_7_fu_1200_p2                                              |     |        | xor_ln56_7   | xor       | auto                   | 0       |
+|      and_ln58_7_fu_1205_p2                                              |     |        | and_ln58_7   | and       | auto                   | 0       |
+|      sparsemux_7_2_8_1_1_U47                                            |     |        | result_21    | sparsemux | onehotencoding_realdef | 0       |
+|      icmp_ln30_fu_233_p2                                                |     |        | icmp_ln30    | seteq     | auto                   | 0       |
+|    + pack_ap_ufixed_8_1_5_3_0_64_8_8_1_128_s                            | 0   |        |              |           |                        |         |
+|      ii_fu_93_p2                                                        |     |        | ii           | add       | fabric                 | 0       |
+|      output_last_fu_99_p2                                               |     |        | output_last  | seteq     | auto                   | 0       |
+|    + pack_ap_ufixed_8_1_5_3_0_64_8_8_1_128_2                            | 0   |        |              |           |                        |         |
+|      ii_fu_93_p2                                                        |     |        | ii           | add       | fabric                 | 0       |
+|      output_last_fu_99_p2                                               |     |        | output_last  | seteq     | auto                   | 0       |
++-------------------------------------------------------------------------+-----+--------+--------------+-----------+------------------------+---------+
+
+
+================================================================
+== Storage Report
+================================================================
++----------------------------------------+--------------+-----------+------+------+--------+--------------------+--------+---------+------------------+
+| Name                                   | Usage        | Type      | BRAM | URAM | Pragma | Variable           | Impl   | Latency | Bitwidth, Depth, |
+|                                        |              |           |      |      |        |                    |        |         | Banks            |
++----------------------------------------+--------------+-----------+------+------+--------+--------------------+--------+---------+------------------+
+| + a                                    |              |           | 0    | 0    |        |                    |        |         |                  |
+|   control_s_axi_U                      | interface    | s_axilite |      |      |        |                    |        |         |                  |
+|  + dataflow_parent_loop_proc           |              |           | 0    | 0    |        |                    |        |         |                  |
+|   + dataflow_in_loop_VITIS_LOOP_15_1_1 |              |           | 0    | 0    |        |                    |        |         |                  |
+|     multicast_stream_0_U               | fifo channel | stream    |      |      |        | multicast_stream_0 | memory | 0       | 80, 16, 1        |
+|     multicast_stream_1_U               | fifo channel | stream    |      |      |        | multicast_stream_1 | memory | 0       | 80, 16, 1        |
+|     layer_0_stream1_U                  | fifo channel | stream    |      |      |        | layer_0_stream1    | srl    | 0       | 64, 16, 1        |
+|     layer_1_stream2_U                  | fifo channel | stream    |      |      |        | layer_1_stream2    | srl    | 0       | 64, 16, 1        |
++----------------------------------------+--------------+-----------+------+------+--------+--------------------+--------+---------+------------------+
+
+
+================================================================
+== Pragma Report
+================================================================
+* Pragmas with Warnings
++----------+---------+---------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Type     | Options | Location                  | Messages                                                                                                                                                                           |
++----------+---------+---------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| dataflow |         | ../src/pl/a/a.cpp:16 in a | Since the only kind of statements allowed in a canonical dataflow region are variable declarations and function calls, the compiler may not be able to correctly handle the region |
++----------+---------+---------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+* Valid Pragma Syntax
++-----------------+----------------------------------------------------+------------------------------------------------------------------------------+
+| Type            | Options                                            | Location                                                                     |
++-----------------+----------------------------------------------------+------------------------------------------------------------------------------+
+| pipeline        | II=1 style=flp                                     | ../../../libraries/pcnaielib/hls/pack.h:13 in pack                           |
+| pipeline        | II=1 style=flp                                     | ../../../libraries/pcnaielib/hls/pack.h:35 in pack                           |
+| pipeline        | II=1 style=flp                                     | ../../../libraries/pcnaielib/hls/retile.h:19 in retile_rowmajor_nxm_to_rxs   |
+| unroll          |                                                    | ../../../libraries/pcnaielib/hls/retile.h:24 in retile_rowmajor_nxm_to_rxs   |
+| array_partition | variable=buffer cyclic factor=ROWS_PER_WRITE dim=1 | ../../../libraries/pcnaielib/hls/retile.h:66 in tile_nxm_to_trxtc, buffer    |
+| pipeline        | II=1 style=flp rewind                              | ../../../libraries/pcnaielib/hls/retile.h:69 in tile_nxm_to_trxtc            |
+| unroll          |                                                    | ../../../libraries/pcnaielib/hls/retile.h:88 in tile_nxm_to_trxtc            |
+| unroll          |                                                    | ../../../libraries/pcnaielib/hls/retile.h:92 in tile_nxm_to_trxtc            |
+| array_partition | variable=buffer cyclic factor=ROWS_PER_WRITE dim=1 | ../../../libraries/pcnaielib/hls/retile.h:134 in detile_trxtc_to_nxm, buffer |
+| pipeline        | II=1 style=flp rewind                              | ../../../libraries/pcnaielib/hls/retile.h:137 in detile_trxtc_to_nxm         |
+| unroll          |                                                    | ../../../libraries/pcnaielib/hls/retile.h:158 in detile_trxtc_to_nxm         |
+| unroll          |                                                    | ../../../libraries/pcnaielib/hls/retile.h:161 in detile_trxtc_to_nxm         |
+| pipeline        | II=1 style=flp                                     | ../../../libraries/pcnaielib/hls/store_to_buffer.h:13 in store_to_buffer     |
+| array_partition | variable=biases complete                           | ../../../libraries/pcnhlslib/dense_relu.h:24 in dense_relu, biases           |
+| array_partition | variable=mult complete                             | ../../../libraries/pcnhlslib/dense_relu.h:26 in dense_relu, mult             |
+| array_partition | variable=acc complete                              | ../../../libraries/pcnhlslib/dense_relu.h:28 in dense_relu, acc              |
+| pipeline        | II=1 style=flp                                     | ../../../libraries/pcnhlslib/dense_relu.h:30 in dense_relu                   |
+| inline          |                                                    | ../../../libraries/pcnhlslib/util.h:14 in ceildiv                            |
+| inline          |                                                    | ../../../libraries/pcnhlslib/util.h:21 in roundup                            |
+| inline          |                                                    | ../../../libraries/pcnhlslib/util.h:28 in compare_and_swap                   |
+| pipeline        | II = 1 rewind                                      | ../../../libraries/pcnhlslib/util.h:105 in repeat                            |
+| pipeline        | II = 1 rewind                                      | ../../../libraries/pcnhlslib/util.h:118 in repeat                            |
+| pipeline        | II = 1 rewind                                      | ../../../libraries/pcnhlslib/util.h:132 in repeat                            |
+| inline          |                                                    | ../../../libraries/pcnhlslib/util.h:146 in exp2                              |
+| bind_op         | variable=res op=mul impl=dsp                       | ../../../libraries/pcnhlslib/util.h:148 in exp2, res                         |
+| inline          |                                                    | ../../../libraries/pcnhlslib/util.h:155 in init_array                        |
+| unroll          |                                                    | ../../../libraries/pcnhlslib/util.h:158 in init_array                        |
+| inline          |                                                    | ../../../libraries/pcnhlslib/util.h:166 in init_range                        |
+| unroll          |                                                    | ../../../libraries/pcnhlslib/util.h:169 in init_range                        |
+| pipeline        | II = 1                                             | ../../../libraries/pcnhlslib/util.h:178 in split                             |
+| unroll          |                                                    | ../../../libraries/pcnhlslib/util.h:186 in split                             |
+| unroll          |                                                    | ../../../libraries/pcnhlslib/util.h:192 in split                             |
+| pipeline        | II=1 rewind                                        | ../../../libraries/pcnhlslib/util.h:203 in pack                              |
+| pipeline        | II=1 rewind                                        | ../../../libraries/pcnhlslib/util.h:224 in pack                              |
+| pipeline        | II=1 rewind                                        | ../../../libraries/pcnhlslib/util.h:249 in pack                              |
+| pipeline        | II=1 rewind                                        | ../../../libraries/pcnhlslib/util.h:270 in unpack                            |
+| pipeline        | II=1 rewind                                        | ../../../libraries/pcnhlslib/util.h:288 in unpack                            |
+| interface       | mode=s_axilite port=numEvents                      | ../src/pl/a/a.cpp:8 in a, numEvents                                          |
+| stable          | variable=numEvents                                 | ../src/pl/a/a.cpp:9 in a, numEvents                                          |
+| interface       | mode=axis port=input_stream                        | ../src/pl/a/a.cpp:10 in a, input_stream                                      |
+| interface       | mode=axis port=energy_stream                       | ../src/pl/a/a.cpp:11 in a, energy_stream                                     |
+| interface       | mode=axis port=layer_0_plio                        | ../src/pl/a/a.cpp:12 in a, layer_0_plio                                      |
+| interface       | mode=axis port=layer_1_plio                        | ../src/pl/a/a.cpp:13 in a, layer_1_plio                                      |
+| unroll          |                                                    | ../src/pl/a/a.cpp:23 in a                                                    |
+| unroll          |                                                    | ../src/pl/a/a.cpp:41 in a                                                    |
+| pipeline        | II=1 style=flp                                     | ../src/pl/a/a.h:22 in multicast_and_forward                                  |
++-----------------+----------------------------------------------------+------------------------------------------------------------------------------+
+
+* Inferred Pragmas
++--------------------------------------------------------+-----------------+--------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Source                                                 | Inferred Pragma | Options                              | Location                                                                                                                                                                                                                                                                                                                            |
++--------------------------------------------------------+-----------------+--------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| pipeline  ../../../libraries/pcnhlslib/dense_relu.h:30 | array_partition | dim=1 type=complete  variable=result | variable result in dense_relu<ap_fixed<16, 4, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_ufixed<8, 1, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<8, 1, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<8, 1, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<26, 7, (ap_q_mode)5, (ap_o_mode)3, 0>, 5, 8, 128> ../../../libraries/pcnhlslib/dense_relu.h:53 |
++--------------------------------------------------------+-----------------+--------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+

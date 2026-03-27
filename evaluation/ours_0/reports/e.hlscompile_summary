@@ -1,0 +1,247 @@
+<ENTRY>
+{
+ "thisFile": "/home/nv3401/Documents/git/belle2/ecl/modules/vck190_ccn_soc/apps/e2e_partitioned/build/e/e.hlscompile_summary",
+ "connectId": "",
+ "serverToken": "",
+ "timestamp": "0"
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_CmdStep",
+ "dateTimestamp": "Tue Mar  3 18:06:50 2026",
+ "timestampMillis": "1772557610900",
+ "buildStep": {
+  "cmdId": "8ce73495-3fdf-4b1c-9fba-47c46fc5c880",
+  "name": "v++",
+  "logFile": "/home/nv3401/Documents/git/belle2/ecl/modules/vck190_ccn_soc/apps/e2e_partitioned/build/e/logs/e.steps.log",
+  "commandLine": "/tools/xilinx/Vitis/2024.2/bin/unwrapped/lnx64.o/v++  -c --mode hls -f xilinx_vck190_base_202420_1 --freqhz=350000000 --config /home/nv3401/Documents/git/belle2/ecl/modules/vck190_ccn_soc/apps/e2e_partitioned/config/e.hls.cfg ",
+  "args": [
+   "-c",
+   "--mode",
+   "hls",
+   "-f",
+   "xilinx_vck190_base_202420_1",
+   "--freqhz=350000000",
+   "--config",
+   "/home/nv3401/Documents/git/belle2/ecl/modules/vck190_ccn_soc/apps/e2e_partitioned/config/e.hls.cfg"
+  ],
+  "iniFiles": [
+   {
+    "path": "/home/nv3401/Documents/git/belle2/ecl/modules/vck190_ccn_soc/apps/e2e_partitioned/config/e.hls.cfg",
+    "content": "#part=xcvc1902-vsva2197-2MP-e-S\n\n[hls]\nclock=350MHz\nflow_target=vitis\npackage.output.format=xo\npackage.output.syn=true\nsyn.file=../src/pl/e/e.cpp\nsyn.file=../src/pl/e/e.h\nsyn.top=e\nsyn.rtl.kernel_profile=1\nsyn.debug.enable=1\nsyn.cflags=-I../../../libraries/pcnhlslib -I../../../libraries/pcnaielib/hls -I../src/pl\nsyn.rtl.register_reset_num=32\nsyn.dataflow.fifo_depth=16\nsyn.interface.m_axi_max_read_burst_length=64\nsyn.interface.m_axi_max_widen_bitwidth=1024\nsyn.interface.m_axi_max_write_burst_length=64\nsyn.interface.m_axi_conservative_mode=0\nsyn.interface.m_axi_alignment_byte_size=128\ncsim.sanitize_address=1\ncsim.code_analyzer=0\ncsim.sanitize_undefined=1\ncosim.enable_dataflow_profiling=true\ncosim.enable_fifo_sizing=0\ncosim.enable_tasks_with_m_axi=0\ncosim.rtl=verilog\ncosim.trace_level=all\ncosim.stable_axilite_update=1"
+   }
+  ],
+  "cwd": "/home/nv3401/Documents/git/belle2/ecl/modules/vck190_ccn_soc/apps/e2e_partitioned/build"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "Tue Mar  3 18:06:50 2026",
+ "timestampMillis": "1772557610901",
+ "status": {
+  "cmdId": "8ce73495-3fdf-4b1c-9fba-47c46fc5c880",
+  "state": "CS_RUNNING"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_FlowMetaData",
+ "dateTimestamp": "Tue Mar  3 18:06:56 2026",
+ "timestampMillis": "1772557616242",
+ "buildSummary": {
+  "hardwarePlatform": "",
+  "hardwareDsa": "",
+  "platformDirectory": "",
+  "runtime": "",
+  "systemConfig": "",
+  "flow": "BF_COMPILE",
+  "target": "TT_HW",
+  "kernels": [
+   {
+    "base": {
+     "type": "KERNEL",
+     "name": "e",
+     "file": "/home/nv3401/Documents/git/belle2/ecl/modules/vck190_ccn_soc/apps/e2e_partitioned/build/e/e.xo",
+     "reports": [],
+     "uuid": ""
+    },
+    "sources": [
+     "/home/nv3401/Documents/git/belle2/ecl/modules/vck190_ccn_soc/apps/e2e_partitioned/src/pl/e/e.cpp",
+     "/home/nv3401/Documents/git/belle2/ecl/modules/vck190_ccn_soc/apps/e2e_partitioned/src/pl/e/e.h"
+    ],
+    "psSources": [],
+    "cuNames": [],
+    "type": "HLS",
+    "frequency": 0,
+    "freqUnits": ""
+   }
+  ],
+  "toolVersion": "2024.2"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_SubCmdStep",
+ "dateTimestamp": "Tue Mar  3 18:06:56 2026",
+ "timestampMillis": "1772557616244",
+ "buildStep": {
+  "cmdId": "90e51a1f-9418-46b7-a696-bc5f7880d2bf",
+  "name": "",
+  "logFile": "/home/nv3401/Documents/git/belle2/ecl/modules/vck190_ccn_soc/apps/e2e_partitioned/build/e/hls/hls.log",
+  "commandLine": "",
+  "args": [],
+  "iniFiles": [],
+  "cwd": "/home/nv3401/Documents/git/belle2/ecl/modules/vck190_ccn_soc/apps/e2e_partitioned/build"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "Tue Mar  3 18:06:56 2026",
+ "timestampMillis": "1772557616244",
+ "status": {
+  "cmdId": "90e51a1f-9418-46b7-a696-bc5f7880d2bf",
+  "state": "CS_RUNNING"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Report",
+ "dateTimestamp": "Tue Mar  3 18:06:56 2026",
+ "timestampMillis": "1772557616244",
+ "report": {
+  "path": "/home/nv3401/Documents/git/belle2/ecl/modules/vck190_ccn_soc/apps/e2e_partitioned/build/e/hls/hls_data.json",
+  "name": "",
+  "fileType": "JSON",
+  "reportType": "HLS_SYNTHESIS",
+  "cmdId": ""
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Report",
+ "dateTimestamp": "Tue Mar  3 18:06:56 2026",
+ "timestampMillis": "1772557616245",
+ "report": {
+  "path": "/home/nv3401/Documents/git/belle2/ecl/modules/vck190_ccn_soc/apps/e2e_partitioned/build/e/hls/syn/report/csynth.rpt",
+  "name": "",
+  "fileType": "TEXT",
+  "reportType": "HLS_SYNTHESIS",
+  "cmdId": ""
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Report",
+ "dateTimestamp": "Tue Mar  3 18:06:56 2026",
+ "timestampMillis": "1772557616245",
+ "report": {
+  "path": "/home/nv3401/Documents/git/belle2/ecl/modules/vck190_ccn_soc/apps/e2e_partitioned/build/e/hls/syn/report/csynth.xml",
+  "name": "",
+  "fileType": "XML",
+  "reportType": "HLS_SYNTHESIS",
+  "cmdId": ""
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Report",
+ "dateTimestamp": "Tue Mar  3 18:10:32 2026",
+ "timestampMillis": "1772557832037",
+ "report": {
+  "path": "/home/nv3401/Documents/git/belle2/ecl/modules/vck190_ccn_soc/apps/e2e_partitioned/build/e/hls",
+  "name": "",
+  "fileType": "DIR",
+  "reportType": "HLS_DATAFLOW",
+  "cmdId": ""
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Report",
+ "dateTimestamp": "Tue Mar  3 18:10:32 2026",
+ "timestampMillis": "1772557832037",
+ "report": {
+  "path": "/home/nv3401/Documents/git/belle2/ecl/modules/vck190_ccn_soc/apps/e2e_partitioned/build/e/hls",
+  "name": "",
+  "fileType": "DIR",
+  "reportType": "HLS_FUNCTION_CALL_GRAPH",
+  "cmdId": ""
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Report",
+ "dateTimestamp": "Tue Mar  3 18:10:32 2026",
+ "timestampMillis": "1772557832038",
+ "report": {
+  "path": "/home/nv3401/Documents/git/belle2/ecl/modules/vck190_ccn_soc/apps/e2e_partitioned/build/e/hls",
+  "name": "",
+  "fileType": "DIR",
+  "reportType": "HLS_SCHEDULE",
+  "cmdId": ""
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "Tue Mar  3 18:10:32 2026",
+ "timestampMillis": "1772557832038",
+ "status": {
+  "cmdId": "90e51a1f-9418-46b7-a696-bc5f7880d2bf",
+  "state": "CS_PASSED"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "Tue Mar  3 18:12:25 2026",
+ "timestampMillis": "1772557945901",
+ "status": {
+  "cmdId": "8ce73495-3fdf-4b1c-9fba-47c46fc5c880",
+  "state": "CS_PASSED"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Report",
+ "dateTimestamp": "Tue Mar  3 18:12:25 2026",
+ "timestampMillis": "1772557945928",
+ "report": {
+  "path": "/home/nv3401/Documents/git/belle2/ecl/modules/vck190_ccn_soc/apps/e2e_partitioned/build/e/reports/v++_compile_e_guidance.html",
+  "name": "",
+  "fileType": "HTML",
+  "reportType": "GLOBAL_RULECHECK_GUIDANCE",
+  "cmdId": ""
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Report",
+ "dateTimestamp": "Tue Mar  3 18:12:25 2026",
+ "timestampMillis": "1772557945928",
+ "report": {
+  "path": "/home/nv3401/Documents/git/belle2/ecl/modules/vck190_ccn_soc/apps/e2e_partitioned/build/e/reports/.db/v++_compile_e_guidance.pb3",
+  "name": "",
+  "fileType": "BINARY_PROTOBUF",
+  "reportType": "GLOBAL_RULECHECK_GUIDANCE",
+  "cmdId": ""
+ }
+}
+</ENTRY>

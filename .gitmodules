@@ -1,0 +1,6 @@
+[submodule "libraries/pcnhlslib"]
+	path = libraries/pcnhlslib
+	url = https://github.com/marcneu/pcnhlslib.git
+[submodule "libraries/pcnaielib"]
+	path = libraries/pcnaielib
+	url = https://github.com/marcneu/pcnaielib.git

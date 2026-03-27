@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DAQ Interactive Diagram</title>
+
+<style>
+body {
+  font-family: Inter, system-ui, sans-serif;
+  background: #f9fafb;
+}
+
+/* Tooltip — styled as popover */
+.tooltip {
+  position: absolute;
+  background: #ffffff;
+  border: 0.5px solid #d0d5dd;
+  padding: 14px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #111827;
+  display: none;
+  pointer-events: none;
+  min-width: 200px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+}
+
+.tooltip-title {
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 0.5px solid #e5e7eb;
+}
+
+.metric-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  border-bottom: 0.5px solid #e5e7eb;
+}
+.metric-row:last-child { border-bottom: none; }
+.metric-label { color: #6b7280; }
+.metric-val { font-weight: 500; }
+
+/* Blocks */
+.block {
+  fill: #ffffff;
+  stroke: #e5e7eb;
+  stroke-width: 1;
+  rx: 6;
+  cursor: pointer;
+  transition: stroke 0.2s;
+}
+.block:hover { stroke: #3b82f6; }
+
+.buffer { fill: #f0f2f5; }
+
+.module {
+  fill: url(#grad);
+  stroke: #e5e7eb;
+  stroke-width: 1;
+  rx: 6;
+  cursor: pointer;
+  transition: stroke 0.2s;
+}
+.module-text { fill: #ffffff !important; }
+
+/* Text */
+text {
+  font-size: 13px;
+  font-weight: 500;
+  fill: #111827;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: none;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 400;
+  fill: #6b7280;
+}
+
+/* Containers */
+.container {
+  fill: none;
+  stroke: #c8cdd6;
+  stroke-width: 1;
+  rx: 10;
+}
+
+/* Particles */
+.particle { fill: #3b82f6; }
+.branch { fill: #10b981; }
+
+@media (prefers-reduced-motion: reduce) {
+  .particle, .branch { display: none; }
+}
+</style>
+
+</head>
+
+<body>
+
+<div id="tooltip" class="tooltip"></div>
+
+<svg width="1300" height="420">
+
+<defs>
+  <!-- gradient -->
+  <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#60a5fa"/>
+    <stop offset="100%" stop-color="#1e3a8a"/>
+  </linearGradient>
+
+  <!-- lighter arrow -->
+
+<marker id="arrow" markerWidth="5" markerHeight="5"
+       refX="5" refY="2.5" orient="auto"> <path d="M0,0 L5,2.5 L0,5" fill="none" stroke="#d0d5dd" stroke-width="1.2"/> </marker> </defs>
+
+<!-- Containers -->
+<!-- Frontend: 20px padding around sensor(220)..buf1 right(470) -->
+<rect class="container" x="200" y="80" width="290" height="90"/>
+<text class="label" x="345" y="70">Frontend Electronics</text>
+
+<!-- DAQ: 20px padding around pre(570)..filter right(960), hw trigger inside -->
+<rect class="container" x="550" y="80" width="430" height="170"/>
+<text class="label" x="765" y="70">Data Acquisition System</text>
+
+<!-- Experiment -->
+<rect class="block" id="experiment" x="50" y="100" width="120" height="60"/>
+<text x="110" y="130">Experiment</text>
+
+<!-- Frontend (50px gaps) -->
+<rect class="block" id="sensor" x="220" y="110" width="100" height="40"/>
+<text x="270" y="130">Sensor</text>
+
+<rect class="block buffer" id="buf1" x="370" y="110" width="100" height="40"/>
+<text x="420" y="130">Buffer</text>
+
+<!-- DAQ (100px gap from buf1 right=470 to pre left=570) -->
+<rect class="block" id="pre" x="570" y="110" width="110" height="40"/>
+<text x="625" y="130">Preprocessor</text>
+
+<rect class="block buffer" id="buf2" x="730" y="110" width="90" height="40"/>
+<text x="775" y="130">Buffer</text>
+
+<rect class="block buffer" id="filter" x="870" y="110" width="90" height="40"/>
+<text x="915" y="130">Filter</text>
+
+<rect class="module" id="hw" x="570" y="190" width="250" height="40"/>
+<text x="695" y="210" class="module-text">Hardware Trigger</text>
+
+<!-- Storage (50px gap from filter right=960) -->
+<rect class="block" id="storage" x="1010" y="110" width="110" height="40"/>
+<text x="1065" y="130">Storage</text>
+
+<!-- Paths -->
+<g stroke="#d0d5dd" stroke-width="1.5" fill="none" marker-end="url(#arrow)">
+
+  <!-- main pipeline: p1–p5 all 50px; p3 is 100px (FE→DAQ gap) -->
+  <path id="p1" d="M170 130 L220 130"/>
+  <path id="p2" d="M320 130 L370 130"/>
+  <path id="p3" d="M470 130 L570 130"/>
+  <path id="p4" d="M680 130 L730 130"/>
+  <path id="p5" d="M820 130 L870 130"/>
+  <path id="p6" d="M960 130 L1010 130"/>
+
+  <!-- buf1 right(470) → hw trigger left(570): midpoint at x=520 -->
+  <path id="p_hw" d="M470 130 L520 130 L520 210 L570 210"/>
+
+  <!-- hw trigger right(820) → filter center(915) → filter bottom(150) -->
+  <path id="p_hw_filter" d="M820 210 L915 210 L915 150"/>
+
+</g>
+
+<!-- Particles — 40px/s everywhere. dur = length/40.                          -->
+<!-- p1,p2,p4,p5,p6=50px→1.25s  p3=100px→2.5s  p_hw=180px→4.5s  p_hw_filter=155px→3.88s -->
+<!-- Same stagger (0.42s) and same begins for p3+p_hw so they split together. -->
+<!-- Reduced rate after filter: 1 particle on p6.                              -->
+<g id="particle-layer">
+  <!-- p1: Experiment → Sensor (50px, 1.25s) -->
+  <circle class="particle" r="3"><animateMotion dur="1.25s" begin="0s"    repeatCount="indefinite"><mpath href="#p1"/></animateMotion></circle>
+  <circle class="particle" r="3"><animateMotion dur="1.25s" begin="0.42s" repeatCount="indefinite"><mpath href="#p1"/></animateMotion></circle>
+  <circle class="particle" r="3"><animateMotion dur="1.25s" begin="0.83s" repeatCount="indefinite"><mpath href="#p1"/></animateMotion></circle>
+
+  <!-- p2: Sensor → Buffer1 (50px, 1.25s) -->
+  <circle class="particle" r="3"><animateMotion dur="1.25s" begin="1.25s" repeatCount="indefinite"><mpath href="#p2"/></animateMotion></circle>
+  <circle class="particle" r="3"><animateMotion dur="1.25s" begin="1.67s" repeatCount="indefinite"><mpath href="#p2"/></animateMotion></circle>
+  <circle class="particle" r="3"><animateMotion dur="1.25s" begin="2.08s" repeatCount="indefinite"><mpath href="#p2"/></animateMotion></circle>
+
+  <!-- Split at buf1: fired together by JS setInterval — begin="indefinite" -->
+  <!-- p3: 6 slots (ceil(2.5s / 0.42s)) so no slot is restarted while still running -->
+  <circle class="particle" r="3" data-split="p3"><animateMotion dur="2.5s" begin="indefinite"><mpath href="#p3"/></animateMotion></circle>
+  <circle class="particle" r="3" data-split="p3"><animateMotion dur="2.5s" begin="indefinite"><mpath href="#p3"/></animateMotion></circle>
+  <circle class="particle" r="3" data-split="p3"><animateMotion dur="2.5s" begin="indefinite"><mpath href="#p3"/></animateMotion></circle>
+  <circle class="particle" r="3" data-split="p3"><animateMotion dur="2.5s" begin="indefinite"><mpath href="#p3"/></animateMotion></circle>
+  <circle class="particle" r="3" data-split="p3"><animateMotion dur="2.5s" begin="indefinite"><mpath href="#p3"/></animateMotion></circle>
+  <circle class="particle" r="3" data-split="p3"><animateMotion dur="2.5s" begin="indefinite"><mpath href="#p3"/></animateMotion></circle>
+  <!-- p_hw: 11 slots (ceil(4.5s / 0.42s)) -->
+  <circle class="branch"   r="3" data-split="hw"><animateMotion dur="4.5s" begin="indefinite"><mpath href="#p_hw"/></animateMotion></circle>
+  <circle class="branch"   r="3" data-split="hw"><animateMotion dur="4.5s" begin="indefinite"><mpath href="#p_hw"/></animateMotion></circle>
+  <circle class="branch"   r="3" data-split="hw"><animateMotion dur="4.5s" begin="indefinite"><mpath href="#p_hw"/></animateMotion></circle>
+  <circle class="branch"   r="3" data-split="hw"><animateMotion dur="4.5s" begin="indefinite"><mpath href="#p_hw"/></animateMotion></circle>
+  <circle class="branch"   r="3" data-split="hw"><animateMotion dur="4.5s" begin="indefinite"><mpath href="#p_hw"/></animateMotion></circle>
+  <circle class="branch"   r="3" data-split="hw"><animateMotion dur="4.5s" begin="indefinite"><mpath href="#p_hw"/></animateMotion></circle>
+  <circle class="branch"   r="3" data-split="hw"><animateMotion dur="4.5s" begin="indefinite"><mpath href="#p_hw"/></animateMotion></circle>
+  <circle class="branch"   r="3" data-split="hw"><animateMotion dur="4.5s" begin="indefinite"><mpath href="#p_hw"/></animateMotion></circle>
+  <circle class="branch"   r="3" data-split="hw"><animateMotion dur="4.5s" begin="indefinite"><mpath href="#p_hw"/></animateMotion></circle>
+  <circle class="branch"   r="3" data-split="hw"><animateMotion dur="4.5s" begin="indefinite"><mpath href="#p_hw"/></animateMotion></circle>
+  <circle class="branch"   r="3" data-split="hw"><animateMotion dur="4.5s" begin="indefinite"><mpath href="#p_hw"/></animateMotion></circle>
+
+  <!-- p_hw_filter: 10 slots (ceil(3.88/0.42)), JS-fired at t=7000ms — same 0.42s stagger as p_hw -->
+  <circle class="branch" r="3" data-split="hwf"><animateMotion dur="3.88s" begin="indefinite"><mpath href="#p_hw_filter"/></animateMotion></circle>
+  <circle class="branch" r="3" data-split="hwf"><animateMotion dur="3.88s" begin="indefinite"><mpath href="#p_hw_filter"/></animateMotion></circle>
+  <circle class="branch" r="3" data-split="hwf"><animateMotion dur="3.88s" begin="indefinite"><mpath href="#p_hw_filter"/></animateMotion></circle>
+  <circle class="branch" r="3" data-split="hwf"><animateMotion dur="3.88s" begin="indefinite"><mpath href="#p_hw_filter"/></animateMotion></circle>
+  <circle class="branch" r="3" data-split="hwf"><animateMotion dur="3.88s" begin="indefinite"><mpath href="#p_hw_filter"/></animateMotion></circle>
+  <circle class="branch" r="3" data-split="hwf"><animateMotion dur="3.88s" begin="indefinite"><mpath href="#p_hw_filter"/></animateMotion></circle>
+  <circle class="branch" r="3" data-split="hwf"><animateMotion dur="3.88s" begin="indefinite"><mpath href="#p_hw_filter"/></animateMotion></circle>
+  <circle class="branch" r="3" data-split="hwf"><animateMotion dur="3.88s" begin="indefinite"><mpath href="#p_hw_filter"/></animateMotion></circle>
+  <circle class="branch" r="3" data-split="hwf"><animateMotion dur="3.88s" begin="indefinite"><mpath href="#p_hw_filter"/></animateMotion></circle>
+  <circle class="branch" r="3" data-split="hwf"><animateMotion dur="3.88s" begin="indefinite"><mpath href="#p_hw_filter"/></animateMotion></circle>
+
+  <!-- p4: Preprocessor → Buffer2 (50px, 1.25s) — arrives after p3: 2.5+2.5=5.0s -->
+  <circle class="particle" r="3"><animateMotion dur="1.25s" begin="5.0s"  repeatCount="indefinite"><mpath href="#p4"/></animateMotion></circle>
+  <circle class="particle" r="3"><animateMotion dur="1.25s" begin="5.42s" repeatCount="indefinite"><mpath href="#p4"/></animateMotion></circle>
+  <circle class="particle" r="3"><animateMotion dur="1.25s" begin="5.83s" repeatCount="indefinite"><mpath href="#p4"/></animateMotion></circle>
+
+  <!-- p5: Buffer2 → Filter (50px, 1.25s) — arrives after p4: 5.0+1.25=6.25s -->
+  <circle class="particle" r="3"><animateMotion dur="1.25s" begin="6.25s" repeatCount="indefinite"><mpath href="#p5"/></animateMotion></circle>
+  <circle class="particle" r="3"><animateMotion dur="1.25s" begin="6.67s" repeatCount="indefinite"><mpath href="#p5"/></animateMotion></circle>
+  <circle class="particle" r="3"><animateMotion dur="1.25s" begin="7.08s" repeatCount="indefinite"><mpath href="#p5"/></animateMotion></circle>
+
+  <!-- p6: 3 slots (ceil(1.25/0.42)), JS-fired at t=10880ms (7000+3880) — aligns with trigger arrival -->
+  <circle class="particle" r="3" data-split="p6"><animateMotion dur="1.25s" begin="indefinite"><mpath href="#p6"/></animateMotion></circle>
+  <circle class="particle" r="3" data-split="p6"><animateMotion dur="1.25s" begin="indefinite"><mpath href="#p6"/></animateMotion></circle>
+  <circle class="particle" r="3" data-split="p6"><animateMotion dur="1.25s" begin="indefinite"><mpath href="#p6"/></animateMotion></circle>
+</g>
+
+</svg>
+
+<script>
+const queryParams = new URLSearchParams(window.location.search);
+const shouldAnimate = queryParams.get("animate") === "1";
+
+const particleLayer = document.getElementById("particle-layer");
+if (!shouldAnimate && particleLayer) {
+  particleLayer.style.display = "none";
+}
+
+if (shouldAnimate) {
+  // Split animation: fire p3 and p_hw together every 420ms via round-robin slots.
+  // Round-robin prevents restarting an in-progress animation on the same element.
+  // Split animation: first particle reaches buf1 after 2500ms (p1+p2 = 1.25+1.25s).
+  // Delay the interval start so the split appears to originate from the experiment.
+  const p3Anims = Array.from(document.querySelectorAll('[data-split="p3"] animateMotion'));
+  const hwAnims = Array.from(document.querySelectorAll('[data-split="hw"] animateMotion'));
+  let splitTick = 0;
+  setTimeout(() => {
+    function fireSplit() {
+      p3Anims[splitTick % p3Anims.length].beginElement();
+      hwAnims[splitTick % hwAnims.length].beginElement();
+      splitTick++;
+    }
+    fireSplit();
+    setInterval(fireSplit, 420);
+  }, 2500);
+
+  // p_hw_filter fires at same 0.42s rate as p_hw, starting when first p_hw arrives (2500+4500=7000ms).
+  const hwfAnims = Array.from(document.querySelectorAll('[data-split="hwf"] animateMotion'));
+  let hwfTick = 0;
+  setTimeout(() => {
+    function fireHwf() {
+      hwfAnims[hwfTick % hwfAnims.length].beginElement();
+      hwfTick++;
+    }
+    fireHwf();
+    setInterval(fireHwf, 1260);
+  }, 7000);
+
+  // p6 fires when first p_hw_filter arrives at filter (7000+3880=10880ms), same 0.42s rate.
+  const p6Anims = Array.from(document.querySelectorAll('[data-split="p6"] animateMotion'));
+  let p6Tick = 0;
+  setTimeout(() => {
+    function fireP6() {
+      p6Anims[p6Tick % p6Anims.length].beginElement();
+      p6Tick++;
+    }
+    fireP6();
+    setInterval(fireP6, 1260);
+  }, 10880);
+}
+
+const tooltip = document.getElementById("tooltip");
+
+const data = {
+  experiment: { title: "Experiment",      metrics: { } },
+  sensor:     { title: "Sensor",          metrics: { "Throughput": "3 MHz" } },
+  buf1:       { title: "Buffer",          metrics: { } },
+  pre:        { title: "Preprocessor",    metrics: { } },
+  hw:         { title: "Hardware Trigger",metrics: { "Latency": "7.16 µs" } },
+  filter:     { title: "Filter",          metrics: { "Throughput": "30 kHz" } },
+  storage:    { title: "Storage",         metrics: { } },
+  buf2:       { title: "Buffer",          metrics: { } },
+};
+
+Object.entries(data).forEach(([id, { title, metrics }]) => {
+  const el = document.getElementById(id);
+  if (!el) return;
+
+  const rows = Object.entries(metrics).map(([k, v]) =>
+    `<div class="metric-row"><span class="metric-label">${k}</span><span class="metric-val">${v}</span></div>`
+  ).join("");
+
+  const html = `<div class="tooltip-title">${title}</div>${rows}`;
+
+  el.addEventListener("mousemove", e => {
+    tooltip.style.display = "block";
+    tooltip.style.left = (e.pageX + 14) + "px";
+    tooltip.style.top  = (e.pageY - tooltip.offsetHeight - 14) + "px";
+    tooltip.innerHTML = html;
+  });
+
+  el.addEventListener("mouseleave", () => {
+    tooltip.style.display = "none";
+  });
+});
+</script>
+
+</body>
+</html>
